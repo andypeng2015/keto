@@ -55,6 +55,13 @@ func (r *RegistryDefault) PopConnectionWithOpts(ctx context.Context, popOpts ...
 		return nil, errors.WithStack(err)
 	}
 
+	// Wrap the connection with the context before starting the close
+	// goroutine. WithContext reads conn.Store (via copy), and conn.Close sets
+	// conn.Store to nil; if the context is already canceled, the goroutine
+	// would otherwise race the read. Ordering the read first makes it
+	// happen-before the goroutine starts.
+	wrapped := conn.WithContext(ctx)
+
 	// Close this connection when the context is closed.
 	go func() {
 		<-ctx.Done()
@@ -63,7 +70,7 @@ func (r *RegistryDefault) PopConnectionWithOpts(ctx context.Context, popOpts ...
 		}
 	}()
 
-	return conn.WithContext(ctx), nil
+	return wrapped, nil
 }
 
 // PopConnection returns the standard connection that is kept for the whole time.

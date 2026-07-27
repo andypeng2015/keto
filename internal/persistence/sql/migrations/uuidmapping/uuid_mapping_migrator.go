@@ -341,7 +341,11 @@ func GetRelationTuples[RT interface {
 	const pageSize = 500
 	var rt RT
 
-	q := sqlx.Rebind(sqlx.BindType(conn.Dialect.Name()), "SELECT * FROM %s WHERE shard_id > ? ORDER BY shard_id LIMIT ?")
+	// Bind-placeholder syntax is a property of the driver, not the dialect
+	// name: sqlx maps drivers (e.g. "pgx") to $-placeholders. Use DefaultDriver
+	// so dialects that share a driver but report a distinct name — YugabyteDB,
+	// which uses "pgx" like postgres — get the correct placeholders.
+	q := sqlx.Rebind(sqlx.BindType(conn.Dialect.DefaultDriver()), "SELECT * FROM %s WHERE shard_id > ? ORDER BY shard_id LIMIT ?")
 
 	err = conn.Store.Select(
 		&res, fmt.Sprintf(q, rt.TableName()), lastID, pageSize)
