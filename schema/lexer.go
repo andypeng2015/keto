@@ -139,9 +139,10 @@ func (l *lexer) backup() {
 	l.pos -= l.width
 }
 
-// emit passes an item back to the client.
+// emit passes an item back to the client. The value is cloned so that
+// long-lived tokens do not pin the whole input in memory.
 func (l *lexer) emit(t itemType) {
-	l.items <- item{t, l.input[l.start:l.pos], l.start, l.pos}
+	l.items <- item{t, strings.Clone(l.input[l.start:l.pos]), l.start, l.pos}
 	l.start = l.pos
 }
 

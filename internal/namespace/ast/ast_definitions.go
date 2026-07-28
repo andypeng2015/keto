@@ -29,6 +29,8 @@ type (
 		// AsRewrite returns the child as a subject-set rewrite, as relations
 		// require a top-level rewrite, even if just one child was parsed.
 		AsRewrite() *SubjectSetRewrite
+		// EstimatedSize approximates the memory in bytes retained by the node.
+		EstimatedSize() int64
 	}
 
 	ComputedSubjectSet struct {

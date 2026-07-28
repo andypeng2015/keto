@@ -344,7 +344,7 @@ func (oplConfig oplNamespaceConfig) newManager() buildNamespaceFn {
 		if !ok {
 			return nil, fmt.Errorf("config value must be string, was %T", entry)
 		}
-		return newOPLConfigWatcher(ctx, c, target)
+		return newOPLConfigWatcher(ctx, c.l, c.Fetcher, target)
 	}
 }
 
