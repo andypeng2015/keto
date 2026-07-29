@@ -21,14 +21,15 @@ import (
 	"github.com/ory/x/cmdx"
 
 	"github.com/ory/keto/cmd/client"
+	"github.com/ory/keto/cmd/client/clienttest"
 	"github.com/ory/keto/internal/driver"
 	"github.com/ory/keto/internal/namespace"
 )
 
 func TestStatusCmd(t *testing.T) {
-	ts := client.NewTestServer(t, []*namespace.Namespace{{Name: t.Name()}}, newStatusCmd)
+	ts := clienttest.NewTestServer(t, []*namespace.Namespace{{Name: t.Name()}}, newStatusCmd)
 
-	for _, serverType := range []client.ServerType{client.ReadServer, client.WriteServer} {
+	for _, serverType := range []clienttest.ServerType{clienttest.ReadServer, clienttest.WriteServer} {
 		t.Run("server_type="+string(serverType), func(t *testing.T) {
 			ts.Cmd.PersistentArgs = append(ts.Cmd.PersistentArgs, "--"+cmdx.FlagQuiet, "--"+FlagEndpoint, string(serverType))
 
@@ -111,7 +112,7 @@ func authInterceptor(header, validValue string) connect.UnaryInterceptorFunc {
 }
 
 func TestAuthorizedRequest(t *testing.T) {
-	ts := client.NewTestServer(
+	ts := clienttest.NewTestServer(
 		t, []*namespace.Namespace{{Name: t.Name()}}, newStatusCmd,
 		driver.WithHandlerOptions(connect.WithInterceptors(authInterceptor("authorization", "Bearer secret"))),
 	)
@@ -129,7 +130,7 @@ func TestAuthorizedRequest(t *testing.T) {
 }
 
 func TestAuthorityRequest(t *testing.T) {
-	ts := client.NewTestServer(
+	ts := clienttest.NewTestServer(
 		t, []*namespace.Namespace{{Name: t.Name()}}, newStatusCmd,
 		driver.WithHandlerOptions(connect.WithInterceptors(authInterceptor("Host", "example.com"))),
 	)

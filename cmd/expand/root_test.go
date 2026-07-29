@@ -12,8 +12,7 @@ import (
 
 	"github.com/ory/x/cmdx"
 
-	"github.com/ory/keto/cmd/client"
-	"github.com/ory/keto/cmd/helpers"
+	"github.com/ory/keto/cmd/client/clienttest"
 	"github.com/ory/keto/cmd/relationtuple"
 	"github.com/ory/keto/internal/namespace"
 )
@@ -31,9 +30,9 @@ func TestExpandCommand(t *testing.T) {
 		return cmd
 	}
 
-	ts := client.NewTestServer(t, []*namespace.Namespace{nspace, nspaceUser}, newCmd)
+	ts := clienttest.NewTestServer(t, []*namespace.Namespace{nspace, nspaceUser}, newCmd)
 
-	tuple := helpers.RandomTupleWithSubjectSet(nspace.Name, nspaceUser.Name)
+	tuple := clienttest.RandomTupleWithSubjectSet(nspace.Name, nspaceUser.Name)
 
 	nsObj := tuple.Namespace + ":" + tuple.Object
 	rel := tuple.Relation

@@ -16,8 +16,7 @@ import (
 	"github.com/ory/x/cmdx"
 	"github.com/ory/x/randx"
 
-	"github.com/ory/keto/cmd/client"
-	"github.com/ory/keto/cmd/helpers"
+	"github.com/ory/keto/cmd/client/clienttest"
 	"github.com/ory/keto/internal/namespace"
 	"github.com/ory/keto/ketoapi"
 )
@@ -41,7 +40,7 @@ func TestCreateCmd(t *testing.T) {
 	}
 
 	otherNspace := &namespace.Namespace{Name: "other"}
-	ts := client.NewTestServer(t, []*namespace.Namespace{nspace, nspaceUser, otherNspace}, newCmd)
+	ts := clienttest.NewTestServer(t, []*namespace.Namespace{nspace, nspaceUser, otherNspace}, newCmd)
 
 	createFile := func(t *testing.T, tuple any) string {
 		dir := t.TempDir()
@@ -58,10 +57,10 @@ func TestCreateCmd(t *testing.T) {
 
 	fns := map[string]getTuple{
 		"subjectID": func() *ketoapi.RelationTuple {
-			return helpers.RandomTupleWithSubjectID(nspace.Name)
+			return clienttest.RandomTupleWithSubjectID(nspace.Name)
 		},
 		"subjectSet": func() *ketoapi.RelationTuple {
-			return helpers.RandomTupleWithSubjectSet(nspace.Name, nspaceUser.Name)
+			return clienttest.RandomTupleWithSubjectSet(nspace.Name, nspaceUser.Name)
 		},
 	}
 

@@ -1,7 +1,11 @@
 // Copyright © 2023 Ory Corp
 // SPDX-License-Identifier: Apache-2.0
 
-package client
+// Package clienttest provides an in-process Keto server for testing the CLI
+// commands. It lives outside of package client because it depends on the whole
+// Keto server: anything importing package client would otherwise link the
+// server, the test framework, and their dependencies into its binary.
+package clienttest
 
 import (
 	"fmt"
@@ -13,6 +17,7 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/stretchr/testify/require"
 
+	"github.com/ory/keto/cmd/client"
 	"github.com/ory/keto/internal/driver"
 	"github.com/ory/keto/internal/driver/config"
 	"github.com/ory/keto/internal/namespace"
@@ -35,11 +40,11 @@ const (
 func (st ServerType) FlagName() string {
 	switch st {
 	case WriteServer:
-		return FlagWriteRemote
+		return client.FlagWriteRemote
 	case ReadServer:
-		return FlagReadRemote
+		return client.FlagReadRemote
 	case OplServer:
-		return FlagOplRemote
+		return client.FlagOplRemote
 	default:
 		panic(fmt.Sprintf("unknown ServerType %s", st))
 	}

@@ -14,8 +14,7 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/stretchr/testify/require"
 
-	"github.com/ory/keto/cmd/client"
-	"github.com/ory/keto/cmd/helpers"
+	"github.com/ory/keto/cmd/client/clienttest"
 	"github.com/ory/keto/internal/namespace"
 	"github.com/ory/keto/ketoapi"
 )
@@ -33,7 +32,7 @@ func TestDeleteCmd(t *testing.T) {
 	}
 
 	otherNspace := &namespace.Namespace{Name: "other"}
-	ts := client.NewTestServer(t, []*namespace.Namespace{nspace, nspaceUser, otherNspace}, newCmd)
+	ts := clienttest.NewTestServer(t, []*namespace.Namespace{nspace, nspaceUser, otherNspace}, newCmd)
 
 	// createTuple is a helper that creates a tuple via the create command so we can then delete it.
 	createTuple := func(t *testing.T, tuple *ketoapi.RelationTuple) {
@@ -49,10 +48,10 @@ func TestDeleteCmd(t *testing.T) {
 
 	fns := map[string]getTuple{
 		"subjectID": func() *ketoapi.RelationTuple {
-			return helpers.RandomTupleWithSubjectID(nspace.Name)
+			return clienttest.RandomTupleWithSubjectID(nspace.Name)
 		},
 		"subjectSet": func() *ketoapi.RelationTuple {
-			return helpers.RandomTupleWithSubjectSet(nspace.Name, nspaceUser.Name)
+			return clienttest.RandomTupleWithSubjectSet(nspace.Name, nspaceUser.Name)
 		},
 	}
 
@@ -164,7 +163,7 @@ func TestDeleteCmd(t *testing.T) {
 
 		for _, prefix := range prefixes {
 			// Test single tuple
-			tuple := helpers.RandomTupleWithSubjectID(nspace.Name)
+			tuple := clienttest.RandomTupleWithSubjectID(nspace.Name)
 			createTuple(t, tuple)
 
 			tmpFile := filepath.Join(t.TempDir(), "tuple.json")
@@ -177,8 +176,8 @@ func TestDeleteCmd(t *testing.T) {
 			require.Equal(t, renderTable(NewAPICollection([]*ketoapi.RelationTuple{tuple})), stdOut)
 
 			// Test array
-			tuple1 := helpers.RandomTupleWithSubjectID(nspace.Name)
-			tuple2 := helpers.RandomTupleWithSubjectID(nspace.Name)
+			tuple1 := clienttest.RandomTupleWithSubjectID(nspace.Name)
+			tuple2 := clienttest.RandomTupleWithSubjectID(nspace.Name)
 			createTuple(t, tuple1)
 			createTuple(t, tuple2)
 
@@ -197,7 +196,7 @@ func TestDeleteCmd(t *testing.T) {
 func TestReadTuplesFromDir(t *testing.T) {
 	writeTuple := func(t *testing.T, dir string, name string) *ketoapi.RelationTuple {
 		t.Helper()
-		tuple := helpers.RandomTupleWithSubjectID(t.Name())
+		tuple := clienttest.RandomTupleWithSubjectID(t.Name())
 		data, err := json.Marshal(tuple)
 		require.NoError(t, err)
 		require.NoError(t, os.WriteFile(filepath.Join(dir, name), data, 0o600))

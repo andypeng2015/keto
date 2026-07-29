@@ -9,8 +9,7 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/stretchr/testify/require"
 
-	"github.com/ory/keto/cmd/client"
-	"github.com/ory/keto/cmd/helpers"
+	"github.com/ory/keto/cmd/client/clienttest"
 	"github.com/ory/keto/cmd/relationtuple"
 	"github.com/ory/keto/internal/namespace"
 )
@@ -28,10 +27,10 @@ func TestCheckCommand(t *testing.T) {
 		return cmd
 	}
 
-	ts := client.NewTestServer(t, []*namespace.Namespace{nspace, nspaceUser}, newCmd)
+	ts := clienttest.NewTestServer(t, []*namespace.Namespace{nspace, nspaceUser}, newCmd)
 
-	tuple1 := helpers.RandomTupleWithSubjectID(nspace.Name)
-	tuple2 := helpers.RandomTupleWithSubjectSet(nspace.Name, nspaceUser.Name)
+	tuple1 := clienttest.RandomTupleWithSubjectID(nspace.Name)
+	tuple2 := clienttest.RandomTupleWithSubjectSet(nspace.Name, nspaceUser.Name)
 	ts.Cmd.ExecNoErr(t, "relation-tuple", "create", tuple2.SubjectSet.String(), tuple2.Relation, tuple2.Namespace+":"+tuple2.Object)
 	ts.Cmd.ExecNoErr(t, "relation-tuple", "create", *tuple1.SubjectID, tuple1.Relation, tuple1.Namespace+":"+tuple1.Object)
 

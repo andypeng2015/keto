@@ -6,7 +6,6 @@ package server
 import (
 	"github.com/spf13/cobra"
 
-	"github.com/ory/keto/cmd/helpers"
 	"github.com/ory/keto/ketoctx"
 )
 
@@ -24,7 +23,7 @@ on configuration options, open the configuration documentation:
 
 >> https://www.ory.com/keto/docs/reference/configuration <<`,
 		RunE: func(cmd *cobra.Command, _ []string) error {
-			reg, err := helpers.NewRegistry(cmd, opts)
+			reg, err := NewRegistry(cmd, opts)
 			if err != nil {
 				return err
 			}
